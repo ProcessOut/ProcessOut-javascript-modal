@@ -21,6 +21,9 @@ module ProcessOut {
       "processout_dynamic_checkout_apple_pay_session_error",
     APPLE_PAY_AUTHORIZED_POST_PROCESS:
       "processout_dynamic_checkout_apple_pay_authorized_post_process",
+    DELETE_PAYMENT_METHOD: "processout_dynamic_checkout_delete_payment_method",
+    DELETE_PAYMENT_METHOD_ERROR:
+      "processout_dynamic_checkout_delete_payment_method_error",
   };
 
   export class DynamicCheckoutEventsUtils {
@@ -112,6 +115,23 @@ module ProcessOut {
     static dispatchApplePaySessionError(err: any) {
       const event = EventsUtils.createEvent(
         DYNAMIC_CHECKOUT_EVENTS.APPLE_PAY_SESSION_ERROR
+      );
+
+      return window.dispatchEvent(event);
+    }
+
+    static dispatchDeletePaymentMethodEvent() {
+      const event = EventsUtils.createEvent(
+        DYNAMIC_CHECKOUT_EVENTS.DELETE_PAYMENT_METHOD
+      );
+
+      return window.dispatchEvent(event);
+    }
+
+    static dispatchDeletePaymentMethodErrorEvent(err: any) {
+      const event = EventsUtils.createEvent(
+        DYNAMIC_CHECKOUT_EVENTS.DELETE_PAYMENT_METHOD_ERROR,
+        err
       );
 
       return window.dispatchEvent(event);

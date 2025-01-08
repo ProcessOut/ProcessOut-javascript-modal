@@ -13,7 +13,9 @@ module ProcessOut {
       paymentMethod: PaymentMethod,
       paymentConfig: DynamicCheckoutPaymentConfigType,
       theme: DynamicCheckoutThemeType,
-      resetContainerHtml: () => HTMLElement
+      resetContainerHtml: () => HTMLElement,
+      deleteMode?: boolean,
+      handleDeletePaymentMethod?: () => void
     ) {
       const rightContentElement = HTMLElements.createElement({
         tagName: "div",
@@ -25,7 +27,11 @@ module ProcessOut {
       super(
         paymentMethod.display.name,
         paymentMethod.display.logo.dark_url.vector,
-        rightContentElement
+        paymentMethod.card_customer_token.customer_token_id,
+        rightContentElement,
+        deleteMode,
+        paymentMethod.card_customer_token.deleting_allowed,
+        handleDeletePaymentMethod
       );
 
       this.processOutInstance = processOutInstance;
@@ -34,10 +40,10 @@ module ProcessOut {
       this.theme = theme;
       this.resetContainerHtml = resetContainerHtml;
 
-      super.appendChildren(this.getChildrenElement());
+      super.appendChildren(this.getChildrenElement(deleteMode));
     }
 
-    private getChildrenElement() {
+    private getChildrenElement(deleteMode?: boolean) {
       const [wrapper, payButton] = HTMLElements.createMultipleElements([
         {
           tagName: "div",
@@ -68,7 +74,9 @@ module ProcessOut {
 
       HTMLElements.appendChildren(wrapper, [payButton]);
 
-      payButton.addEventListener("click", this.handlePayment.bind(this));
+      if (!deleteMode) {
+        payButton.addEventListener("click", this.handlePayment.bind(this));
+      }
 
       return wrapper;
     }

@@ -12,4 +12,10 @@ module ProcessOut {
 
   export const PAYMENT_ERROR_IMAGE_ASSET =
     "https://js.processout.com/images/dynamic-checkout-assets/payment-error.svg";
+
+  export const COG_ICON =
+    "https://js.processout.com/images/dynamic-checkout-assets/cog-icon.svg";
+
+  export const TRASH_ICON =
+    "https://js.processout.com/images/dynamic-checkout-assets/trash-icon.svg";
 }

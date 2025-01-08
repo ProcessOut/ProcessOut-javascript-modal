@@ -5,6 +5,7 @@ module ProcessOut {
     processOutInstance: ProcessOut;
     dynamicCheckout: DynamicCheckout;
     paymentConfig: DynamicCheckoutPaymentConfigType;
+    paymentMethodsManager: PaymentMethodsManager;
     theme: DynamicCheckoutThemeType;
     element: HTMLElement;
 
@@ -19,6 +20,7 @@ module ProcessOut {
       this.paymentConfig = paymentConfig;
       this.theme = theme;
       this.element = this.createViewElement();
+      this.loadTingleLibrary();
     }
 
     private createViewElement() {
@@ -112,12 +114,17 @@ module ProcessOut {
       const [
         expressCheckoutWrapper,
         expressCheckoutHeader,
+        expressCheckoutHeaderText,
         walletCheckoutWrapper,
         expressPaymentMethodsWrapper,
       ] = HTMLElements.createMultipleElements([
         {
           tagName: "div",
           classNames: ["dco-express-checkout-wrapper"],
+        },
+        {
+          tagName: "div",
+          classNames: ["dco-express-checkout-header-wrapper"],
         },
         {
           tagName: "span",
@@ -137,13 +144,40 @@ module ProcessOut {
         },
       ]);
 
+      expressCheckoutHeader.appendChild(expressCheckoutHeaderText);
       expressCheckoutWrapper.appendChild(expressCheckoutHeader);
+
+      if (this.shouldShowSettingsButton()) {
+        this.createPaymentMethodsManager(expressCheckoutHeader);
+      }
 
       return {
         expressCheckoutWrapper,
         walletCheckoutWrapper,
         expressPaymentMethodsWrapper,
       };
+    }
+
+    private createPaymentMethodsManager(expressCheckoutHeader: Element) {
+      const settingsButton = document.querySelector(
+        ".dco-express-checkout-header-settings-button"
+      );
+
+      if (settingsButton) {
+        settingsButton.remove();
+      }
+
+      const { expressPaymentMethods } = this.getPaymentMethodsElements(true);
+
+      if (expressPaymentMethods.length === 0) {
+        return;
+      }
+
+      this.paymentMethodsManager = new PaymentMethodsManager(
+        expressPaymentMethods
+      );
+
+      expressCheckoutHeader.appendChild(this.paymentMethodsManager.element);
     }
 
     private getRegularPaymentMethodsElements(
@@ -181,7 +215,7 @@ module ProcessOut {
       return { regularPaymentMethodsSectionWrapper, regularPaymentMethodsList };
     }
 
-    private getPaymentMethodsElements() {
+    private getPaymentMethodsElements(deleteMode?: boolean) {
       let walletPaymentMethods = [];
       let expressPaymentMethods = [];
       let regularPaymentMethods = [];
@@ -214,7 +248,9 @@ module ProcessOut {
                 paymentMethod,
                 this.paymentConfig,
                 this.theme,
-                this.resetContainerHtml.bind(this)
+                this.resetContainerHtml.bind(this),
+                deleteMode,
+                () => this.handleDeletePaymentMethod(paymentMethod)
               );
 
               return expressPaymentMethods.push(savedApmPaymentMethod);
@@ -225,7 +261,9 @@ module ProcessOut {
                 paymentMethod,
                 this.paymentConfig,
                 this.theme,
-                this.resetContainerHtml.bind(this)
+                this.resetContainerHtml.bind(this),
+                deleteMode,
+                () => this.handleDeletePaymentMethod(paymentMethod)
               );
 
               return expressPaymentMethods.push(savedCardPaymentMethod);
@@ -276,6 +314,108 @@ module ProcessOut {
     private resetContainerHtml() {
       this.element.innerHTML = "";
       return this.element;
+    }
+
+    private shouldShowSettingsButton() {
+      let shouldShowSettingsButton = false;
+
+      this.paymentConfig.invoiceDetails.payment_methods.forEach(
+        (paymentMethod) => {
+          const canDeleteApm =
+            paymentMethod.type === "apm_customer_token" &&
+            paymentMethod.apm_customer_token &&
+            paymentMethod.apm_customer_token.deleting_allowed;
+
+          const canDeleteCard =
+            paymentMethod.type === "card_customer_token" &&
+            paymentMethod.card_customer_token &&
+            paymentMethod.card_customer_token.deleting_allowed;
+
+          if (canDeleteApm || canDeleteCard) {
+            shouldShowSettingsButton = true;
+          }
+        }
+      );
+
+      return shouldShowSettingsButton;
+    }
+
+    private handleDeletePaymentMethod(paymentMethod: PaymentMethod) {
+      const isCardToken = paymentMethod.type === "card_customer_token";
+
+      const tokenId = isCardToken
+        ? paymentMethod.card_customer_token.customer_token_id
+        : paymentMethod.apm_customer_token.customer_token_id;
+
+      const customerId = this.paymentConfig.invoiceDetails.customer_id;
+
+      this.processOutInstance.apiRequest(
+        "delete",
+        `customers/${customerId}/tokens/${tokenId}`,
+        {},
+        () => {
+          this.deletePaymentMethodFromDom(tokenId, isCardToken);
+          DynamicCheckoutEventsUtils.dispatchDeletePaymentMethodEvent();
+        },
+        (err) => {
+          DynamicCheckoutEventsUtils.dispatchDeletePaymentMethodErrorEvent(err);
+        },
+        0,
+        {
+          clientSecret: this.paymentConfig.clientSecret,
+        }
+      );
+    }
+
+    private deletePaymentMethodFromDom(id: string, isCardToken: boolean) {
+      const paymentMethodElements = document.querySelectorAll(`[data-id=${id}`);
+      const paymentManagerMethodsList = document.querySelector(
+        ".dco-modal-payment-methods-list"
+      );
+      const expressCheckoutMethodsList = document.querySelector(
+        ".dco-express-checkout-payment-methods-wrapper"
+      );
+      const expressCheckoutSettingsButton = document.querySelector(
+        ".dco-express-checkout-header-settings-button"
+      );
+
+      const expressCheckoutHeader = document.querySelector(
+        ".dco-express-checkout-header-wrapper"
+      );
+
+      paymentMethodElements.forEach((element) => element.remove());
+
+      this.paymentConfig.invoiceDetails.payment_methods =
+        this.paymentConfig.invoiceDetails.payment_methods.filter(
+          (paymentMethod) => {
+            if (isCardToken && paymentMethod.card_customer_token) {
+              return paymentMethod.card_customer_token.customer_token_id !== id;
+            }
+
+            if (paymentMethod.apm_customer_token) {
+              return paymentMethod.apm_customer_token.customer_token_id !== id;
+            }
+
+            return true;
+          }
+        );
+
+      if (paymentManagerMethodsList.childNodes.length === 0) {
+        this.paymentMethodsManager.modal.destroy();
+        expressCheckoutSettingsButton.remove();
+      }
+
+      if (expressCheckoutMethodsList.childNodes.length === 0) {
+        expressCheckoutMethodsList.remove();
+      }
+
+      this.createPaymentMethodsManager(expressCheckoutHeader);
+    }
+
+    private loadTingleLibrary() {
+      const tingleScriptElement = document.createElement("script");
+      tingleScriptElement.src = tingleLibrary;
+      document.head.appendChild(tingleScriptElement);
     }
   }
 }
