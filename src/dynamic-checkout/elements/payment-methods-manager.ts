@@ -5,10 +5,15 @@ module ProcessOut {
     public element: HTMLElement;
     private expressPaymentMethods: PaymentMethodButton[];
     public modal: any;
+    private paymentConfig: DynamicCheckoutPaymentConfigType;
 
-    constructor(expressPaymentMethods: PaymentMethodButton[]) {
+    constructor(
+      expressPaymentMethods: PaymentMethodButton[],
+      paymentConfig: DynamicCheckoutPaymentConfigType
+    ) {
       this.expressPaymentMethods = expressPaymentMethods;
       this.element = this.createElement();
+      this.paymentConfig = paymentConfig;
     }
 
     private createElement() {
@@ -44,15 +49,25 @@ module ProcessOut {
               footer: true,
               stickyFooter: false,
               closeMethods: ["overlay", "button", "escape"],
-              closeLabel: "Close",
+              closeLabel: Translations.getText(
+                "payments-manager-close-button",
+                this.paymentConfig.locale
+              ),
             })
           : null;
 
       this.modal.setContent(this.createModalContent());
 
-      this.modal.addFooterBtn("Close", "close-modal-btn", () => {
-        this.modal.close();
-      });
+      this.modal.addFooterBtn(
+        Translations.getText(
+          "payments-manager-close-button",
+          this.paymentConfig.locale
+        ),
+        "close-modal-btn",
+        () => {
+          this.modal.close();
+        }
+      );
 
       this.modal.open();
     }
@@ -67,7 +82,10 @@ module ProcessOut {
           {
             tagName: "div",
             classNames: ["dco-modal-content-header"],
-            textContent: "Manage saved payment methods",
+            textContent: Translations.getText(
+              "payments-manager-header",
+              this.paymentConfig.locale
+            ),
           },
           {
             tagName: "div",

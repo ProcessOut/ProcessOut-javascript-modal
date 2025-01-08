@@ -25,5 +25,7 @@ module ProcessOut {
     "city-label": "City",
     "postcode-label": "Postal code",
     "state-label": "State",
+    "payments-manager-header": "Manage saved payment methods",
+    "payments-manager-close-button": "Close",
   };
 }

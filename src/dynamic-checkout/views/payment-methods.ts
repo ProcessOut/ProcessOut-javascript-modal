@@ -174,7 +174,8 @@ module ProcessOut {
       }
 
       this.paymentMethodsManager = new PaymentMethodsManager(
-        expressPaymentMethods
+        expressPaymentMethods,
+        this.paymentConfig
       );
 
       expressCheckoutHeader.appendChild(this.paymentMethodsManager.element);
