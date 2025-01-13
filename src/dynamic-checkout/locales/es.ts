@@ -28,5 +28,8 @@ module ProcessOut {
     "state-label": "Estado",
     "payments-manager-header": "Administrar métodos de pago guardados",
     "payments-manager-close-button": "Cerrar",
+    "no-saved-payment-methods-header": "No hay métodos de pago guardados",
+    "no-saved-payment-methods-message":
+      "La próxima vez que guardes un método de pago, aparecerá aquí.",
   };
 }

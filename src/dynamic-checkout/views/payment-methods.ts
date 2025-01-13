@@ -376,9 +376,6 @@ module ProcessOut {
       const expressCheckoutMethodsList = document.querySelector(
         ".dco-express-checkout-payment-methods-wrapper"
       );
-      const expressCheckoutSettingsButton = document.querySelector(
-        ".dco-express-checkout-header-settings-button"
-      );
 
       const expressCheckoutHeader = document.querySelector(
         ".dco-express-checkout-header-wrapper"
@@ -402,8 +399,7 @@ module ProcessOut {
         );
 
       if (paymentManagerMethodsList.childNodes.length === 0) {
-        this.paymentMethodsManager.modal.destroy();
-        expressCheckoutSettingsButton.remove();
+        this.createPaymentsManagerEmptyState(paymentManagerMethodsList);
       }
 
       if (expressCheckoutMethodsList.childNodes.length === 0) {
@@ -411,6 +407,74 @@ module ProcessOut {
       }
 
       this.createPaymentMethodsManager(expressCheckoutHeader);
+    }
+
+    private createPaymentsManagerEmptyState(
+      paymentsManagerMethodsList: Element
+    ) {
+      const [
+        noSavedPaymentMethodsWrapper,
+        noSavedPaymentMethodsIconWrapper,
+        noSavedPaymentMethodsIcon,
+        noSavedPaymentMethodsTextWrapper,
+        noSavedPaymentMethodsHeader,
+        noSavedPaymentMethodsMessage,
+      ] = HTMLElements.createMultipleElements([
+        {
+          tagName: "div",
+          classNames: ["dco-no-saved-payment-methods-wrapper"],
+        },
+        {
+          tagName: "div",
+          classNames: ["dco-no-saved-payment-methods-icon-wrapper"],
+        },
+        {
+          tagName: "img",
+          classNames: ["dco-no-saved-payment-methods-icon"],
+          attributes: {
+            src: CREDIT_CARD_ICON,
+          },
+        },
+        {
+          tagName: "div",
+          classNames: ["dco-no-saved-payment-methods-text-wrapper"],
+        },
+        {
+          tagName: "span",
+          classNames: ["dco-no-saved-payment-methods-header"],
+          textContent: Translations.getText(
+            "no-saved-payment-methods-header",
+            this.paymentConfig.locale
+          ),
+        },
+        {
+          tagName: "span",
+          classNames: ["dco-no-saved-payment-methods-message"],
+          textContent: Translations.getText(
+            "no-saved-payment-methods-message",
+            this.paymentConfig.locale
+          ),
+        },
+      ]);
+
+      noSavedPaymentMethodsIconWrapper.appendChild(noSavedPaymentMethodsIcon);
+
+      noSavedPaymentMethodsTextWrapper.appendChild(noSavedPaymentMethodsHeader);
+      noSavedPaymentMethodsTextWrapper.appendChild(
+        noSavedPaymentMethodsMessage
+      );
+
+      noSavedPaymentMethodsWrapper.appendChild(
+        noSavedPaymentMethodsIconWrapper
+      );
+      noSavedPaymentMethodsWrapper.appendChild(
+        noSavedPaymentMethodsTextWrapper
+      );
+
+      paymentsManagerMethodsList.appendChild(noSavedPaymentMethodsWrapper);
+      paymentsManagerMethodsList.classList.add(
+        "dco-modal-payment-methods-list--no-methods"
+      );
     }
 
     private loadTingleLibrary() {

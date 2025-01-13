@@ -27,5 +27,8 @@ module ProcessOut {
     "state-label": "State",
     "payments-manager-header": "Manage saved payment methods",
     "payments-manager-close-button": "Close",
+    "no-saved-payment-methods-header": "No saved payment methods",
+    "no-saved-payment-methods-message":
+      "The next time you save a payment method, it will appear here.",
   };
 }

@@ -140,7 +140,7 @@ const defaultStyles = `
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 40px;
     width: 100%;
 
     @media (max-width: 480px) {
@@ -545,13 +545,20 @@ const defaultStyles = `
 
   .dco-modal-content-body {
     padding: 24px;
+    height: 379px;
+    overflow-y: auto;
   }
   
 
   .dco-modal-payment-methods-list {
     width: 100%;
-    border: 1px solid #F2F2F2;
+    border: 1px solid #dde0e3;
     border-radius: 4px;
+  }
+
+  .dco-modal-payment-methods-list--no-methods {
+    border: none;
+    height: 100%;
   }
 
 .tingle-modal * {
@@ -619,6 +626,7 @@ const defaultStyles = `
   width: 100%;
   max-width: 600px;
   border-radius: 4px;
+  height: 490px;
   background: #fff;
   opacity: 1;
   cursor: auto;
@@ -731,5 +739,59 @@ const defaultStyles = `
 
 .tingle-btn--pull-right {
   float: right;
+}
+
+.dco-invoice-loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dco-invoice-loading {
+  width: 40px;
+  height: 40px; 
+  border: 5px solid #dedede;
+  border-bottom-color: #242C38;
+  display: inline-block;
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+.dco-no-saved-payment-methods-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  height: 100%;
+  width: 100%;
+  gap: 24px;
+}
+
+.dco-no-saved-payment-methods-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 12px;
+}
+
+.dco-no-saved-payment-methods-header {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.dco-no-saved-payment-methods-message {
+  font-size: 14px;
+  color: #696F79;
+  font-weight: 400;
+}
+
+.dco-no-saved-payment-methods-icon-wrapper {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: #1213140a;
 }
 `;

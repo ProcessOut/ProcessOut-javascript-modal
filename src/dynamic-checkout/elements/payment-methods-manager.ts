@@ -47,7 +47,7 @@ module ProcessOut {
         window.globalThis && window.globalThis.tingle
           ? new window.globalThis.tingle.modal({
               footer: true,
-              stickyFooter: false,
+              stickyFooter: true,
               closeMethods: ["overlay", "button", "escape"],
               closeLabel: Translations.getText(
                 "payments-manager-close-button",

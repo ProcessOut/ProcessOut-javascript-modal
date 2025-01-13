@@ -18,4 +18,7 @@ module ProcessOut {
 
   export const TRASH_ICON =
     "https://js.processout.com/images/dynamic-checkout-assets/trash-icon.svg";
+
+  export const CREDIT_CARD_ICON =
+    "https://js.processout.com/images/dynamic-checkout-assets/credit-card.svg";
 }

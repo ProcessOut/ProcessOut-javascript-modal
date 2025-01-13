@@ -119,7 +119,7 @@ module ProcessOut {
         HTMLElements.appendChildren(deleteButton, [deleteButtonIcon]);
         HTMLElements.appendChildren(rightContentWrapper, [deleteButton]);
 
-        deleteButton.addEventListener("click", (event) => {
+        deleteButton.addEventListener("click", () => {
           deleteButton.setAttribute("disabled", "true");
           handleDeletePaymentMethod();
         });

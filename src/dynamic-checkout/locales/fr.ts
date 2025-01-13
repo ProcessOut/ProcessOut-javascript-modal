@@ -29,5 +29,8 @@ module ProcessOut {
     "state-label": "État",
     "payments-manager-header": "Gérer les méthodes de paiement enregistrées",
     "payments-manager-close-button": "Fermer",
+    "no-saved-payment-methods-header": "Aucune méthode de paiement enregistrée",
+    "no-saved-payment-methods-message":
+      "La prochaine fois que vous enregistrez une méthode de paiement, elle apparaîtra ici.",
   };
 }
