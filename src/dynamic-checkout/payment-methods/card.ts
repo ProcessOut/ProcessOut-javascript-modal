@@ -36,7 +36,7 @@ module ProcessOut {
 
       super(
         display.name,
-        display.logo.dark_url.vector,
+        display.logo.light_url.vector,
         display.name,
         rightContent
       );
