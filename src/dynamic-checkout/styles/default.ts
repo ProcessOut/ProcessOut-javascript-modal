@@ -492,6 +492,9 @@ const defaultStyles = `
     width: 32px;
     height: 32px;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -503,6 +506,9 @@ const defaultStyles = `
   .dco-delete-payment-method-button {
     width: 32px;
     height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: transparent;
     border: none;
     cursor: pointer;

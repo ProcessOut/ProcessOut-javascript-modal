@@ -568,11 +568,11 @@ module ProcessOut {
       ]);
 
       countries.forEach((country) => {
-        let shouldShow = true;
+        let shouldShow = restrictedCountries.length === 0 ? true : false;
 
         restrictedCountries.forEach((restrictedCountry) => {
           if (restrictedCountry === country) {
-            shouldShow = false;
+            shouldShow = true;
           }
         });
 
