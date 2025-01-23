@@ -77,6 +77,11 @@ module ProcessOut {
     }
 
     static dispatchPaymentErrorEvent(errorData: any) {
+      // TODO: Temporary fix until we fix properly the field unavailable error
+      if (errorData.code === "processout-js.field.unavailable") {
+        return;
+      }
+
       const event = EventsUtils.createEvent(
         DYNAMIC_CHECKOUT_EVENTS.PAYMENT_ERROR,
         errorData
