@@ -34,7 +34,7 @@ module ProcessOut {
     }
 
     private proceedToApmPayment() {
-      const { apm, display } = this.paymentMethod;
+      const { apm } = this.paymentMethod;
       const { clientSecret } = this.paymentConfig;
 
       const actionHandlerOptions = new ActionHandlerOptions(
@@ -68,7 +68,6 @@ module ProcessOut {
         );
       }
 
-      cardPaymentOptions["allow_fallback_to_sale"] = true;
       this.handleApmPayment(
         cardPaymentOptions,
         actionHandlerOptions,

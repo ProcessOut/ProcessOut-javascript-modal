@@ -29,6 +29,7 @@ module ProcessOut {
         projectId: this.projectId,
         locale: this.locale,
         invoiceDetails: this.invoiceDetails,
+        capturePayments: this.capturePayments,
       };
     }
 

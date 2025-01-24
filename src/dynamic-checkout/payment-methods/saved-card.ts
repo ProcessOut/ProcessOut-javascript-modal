@@ -89,6 +89,7 @@ module ProcessOut {
         this.paymentMethod.card_customer_token.customer_token_id,
         {
           authorize_only: !this.paymentConfig.capturePayments,
+          allow_fallback_to_sale: true,
         },
         this.handlePaymentSuccess.bind(this),
         this.handlePaymentError.bind(this)

@@ -94,6 +94,7 @@ module ProcessOut {
     private handleTokenizeSuccess(cardToken: string) {
       const cardPaymentOptions = {
         authorize_only: !this.paymentConfig.capturePayments,
+        allow_fallback_to_sale: true,
       };
 
       const saveForFutureCheckbox = document.getElementById(
