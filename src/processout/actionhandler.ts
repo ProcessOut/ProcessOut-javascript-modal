@@ -61,8 +61,8 @@ module ProcessOut {
     }
 
     export type IframeOverride = {
-        width: number,
-        height: number
+        width: number | string,
+        height: number | string,
     }
 
     export class ActionHandlerOptions {
@@ -74,8 +74,8 @@ module ProcessOut {
         public newWindowWidth?: number;
 
         // Specifies how big the iframe is, it can be overridden by IframeOverride
-        public iframeWidth: number = 440;
-        public iframeHeight: number = 480;
+        public iframeWidth: number | string = 440;
+        public iframeHeight: number | string = 480;
 
         // gatewayLogo is shown when the action is done on another tab or window
         public gatewayLogo?: string;
@@ -144,8 +144,14 @@ module ProcessOut {
 
             if(override) {
                 this.flow = ActionFlow.IFrame;
-                this.iframeWidth = override.width;
-                this.iframeHeight = override.height;
+
+                if (override.width) {
+                    this.iframeWidth = override.width;
+                }
+
+                if (override.height) {
+                    this.iframeHeight = override.height;
+                }
             }
         }
     }
@@ -228,9 +234,16 @@ module ProcessOut {
                 iframeWrapper.style.width = "100%";
                 iframeWrapper.setAttribute("style", "position: fixed; top: 0; left: 0; background: rgba(0, 0, 0, 0.5); z-index: 9999999; overflow: auto;");
 
+
+                // If the option is number it means that we should use pixels here for the sake of 
+                // backward compatibility. If not - then we use it as value since user can pass
+                // any unit like percentages e.g. 100%, calc(100% - 80px), 30rem etc
+                const width = typeof this.options.iframeWidth === 'number' ? `${this.options.iframeWidth}px` : this.options.iframeWidth
+                const height = typeof this.options.iframeHeight === 'number' ? `${this.options.iframeHeight}px` : this.options.iframeHeight;
+
                 // Create the iframe to be used later
                 var iframe = document.createElement("iframe");
-                iframe.setAttribute("style", `margin: 1em auto; width: ${this.options.iframeWidth}px; height: ${this.options.iframeHeight}px; max-width: 100%; max-height: 100%; display: block; box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07); background-color: #ECEFF1; background-image: url("${this.instance.endpoint("js", "/images/loader.gif")}"); background-repeat: no-repeat; background-position: center;")`);
+                iframe.setAttribute("style", `margin: 1em auto; width: ${width}; height: ${height}; max-width: 100%; max-height: 100%; display: block; box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07); background-color: #ECEFF1; background-image: url("${this.instance.endpoint("js", "/images/loader.gif")}"); background-repeat: no-repeat; background-position: center;")`);
                 iframe.setAttribute("frameborder", "0");
                 iframe.onload = function() {
                     // Remove the background loader once it is actually loaded

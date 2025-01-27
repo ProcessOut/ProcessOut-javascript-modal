@@ -1430,7 +1430,8 @@ module ProcessOut {
       customerTokenID: string,
       options: any,
       success: (data: any) => void,
-      error: (err: Exception) => void
+      error: (err: Exception) => void,
+      iframeOverride?: IframeOverride
     ): void {
       if (val instanceof Card || val instanceof CardForm)
         return this.tokenize(
@@ -1443,7 +1444,8 @@ module ProcessOut {
               customerTokenID,
               options,
               success,
-              error
+              error,
+              iframeOverride
             );
           }.bind(this),
           error
@@ -1455,7 +1457,8 @@ module ProcessOut {
         customerTokenID,
         options,
         success,
-        error
+        error,
+        iframeOverride
       );
     }
 
@@ -1465,7 +1468,8 @@ module ProcessOut {
       customerTokenID: string,
       options: any,
       success: (data: any) => void,
-      error: (err: Exception) => void
+      error: (err: Exception) => void,
+      iframeOverride?: IframeOverride
     ): void {
       this.handleCardActions(
         "PUT",
@@ -1474,7 +1478,9 @@ module ProcessOut {
         cardID,
         options,
         success,
-        error
+        error,
+        undefined,
+        iframeOverride
       );
     }
 
@@ -1495,7 +1501,8 @@ module ProcessOut {
       options: any,
       success: (data: any) => void,
       error: (err: Exception) => void,
-      apiRequestOptions?: apiRequestOptions
+      apiRequestOptions?: apiRequestOptions,
+      iframeOverride?: IframeOverride,
     ): void {
       const url: string = `invoices/${invoiceID}/capture`;
       this.threeDSInitiationURL = `invoices/${invoiceID}/three-d-s`;
@@ -1509,7 +1516,8 @@ module ProcessOut {
         options,
         success,
         error,
-        apiRequestOptions
+        apiRequestOptions,
+        iframeOverride
       );
     }
 
@@ -1528,7 +1536,8 @@ module ProcessOut {
       options: any,
       success: (data: any) => void,
       error: (err: Exception) => void,
-      apiRequestOptions?: apiRequestOptions
+      apiRequestOptions?: apiRequestOptions,
+      iframeOverride?: IframeOverride
     ): void {
       this.handleCardActions(
         "POST",
@@ -1538,7 +1547,8 @@ module ProcessOut {
         options,
         success,
         error,
-        apiRequestOptions
+        apiRequestOptions,
+        iframeOverride
       );
     }
 
@@ -1556,7 +1566,8 @@ module ProcessOut {
       cardID: string,
       options: any,
       success: (data: any) => void,
-      error: (err: Exception) => void
+      error: (err: Exception) => void,
+      iframeOverride?: IframeOverride,
     ): void {
       if (!options) options = {};
       options.incremental = true;
@@ -1567,7 +1578,9 @@ module ProcessOut {
         cardID,
         options,
         success,
-        error
+        error,
+        undefined,
+        iframeOverride,
       );
     }
 
@@ -1615,7 +1628,8 @@ module ProcessOut {
       options: any,
       success: (data: any) => void,
       error: (err: Exception) => void,
-      apiRequestOptions?: apiRequestOptions
+      apiRequestOptions?: apiRequestOptions,
+      iframeOverride?: IframeOverride
     ): void {
       // returns this.hppInitialURL only once during the first call from HPP, then returns the endpoint
       const getEndpoint = (): string => {
@@ -1685,7 +1699,8 @@ module ProcessOut {
               options,
               success,
               error,
-              apiRequestOptions
+              apiRequestOptions,
+              iframeOverride
             );
           }.bind(this);
 
@@ -1711,11 +1726,16 @@ module ProcessOut {
                     options,
                     success,
                     error,
-                    apiRequestOptions
+                    apiRequestOptions,
+                    iframeOverride
                   );
                 }.bind(this),
                 error,
-                new ActionHandlerOptions(opts)
+                new ActionHandlerOptions(
+                  opts,
+                  undefined,
+                  opts !== ActionHandlerOptions.ThreeDSChallengeFlowNoIframe ? iframeOverride : undefined
+                )
               );
               break;
 
@@ -1739,7 +1759,9 @@ module ProcessOut {
                   nextStep(gReq.token());
                 },
                 new ActionHandlerOptions(
-                  ActionHandlerOptions.ThreeDSFingerprintFlow
+                  ActionHandlerOptions.ThreeDSFingerprintFlow,
+                  undefined,
+                  iframeOverride
                 )
               );
               break;
@@ -1751,7 +1773,9 @@ module ProcessOut {
                 nextStep,
                 error,
                 new ActionHandlerOptions(
-                  ActionHandlerOptions.ThreeDSChallengeFlow
+                  ActionHandlerOptions.ThreeDSChallengeFlow,
+                  undefined,
+                  iframeOverride
                 )
               );
               break;
