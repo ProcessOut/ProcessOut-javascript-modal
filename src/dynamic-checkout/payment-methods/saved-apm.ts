@@ -2,39 +2,39 @@
 
 module ProcessOut {
   export class SavedApmPaymentMethod extends PaymentMethodButton {
-    private processOutInstance: ProcessOut;
-    private paymentConfig: DynamicCheckoutPaymentConfigType;
-    private paymentMethod: PaymentMethod;
-    private theme: DynamicCheckoutThemeType;
-    private resetContainerHtml: () => HTMLElement;
+    private processOutInstance: ProcessOut
+    private paymentConfig: DynamicCheckoutPaymentConfig
+    private paymentMethod: PaymentMethod
+    private theme: DynamicCheckoutThemeType
+    private resetContainerHtml: () => HTMLElement
 
     constructor(
       processOutInstance: ProcessOut,
       paymentMethod: PaymentMethod,
-      paymentConfig: DynamicCheckoutPaymentConfigType,
+      paymentConfig: DynamicCheckoutPaymentConfig,
       theme: DynamicCheckoutThemeType,
-      resetContainerHtml: () => HTMLElement
+      resetContainerHtml: () => HTMLElement,
     ) {
       const rightContentElement = HTMLElements.createElement({
         tagName: "div",
         classNames: ["dco-payment-method-right-content"],
-      });
+      })
 
-      rightContentElement.textContent = paymentMethod.display.description;
+      rightContentElement.textContent = paymentMethod.display.description
 
       super(
         paymentMethod.display.name,
         paymentMethod.display.logo.dark_url.vector,
-        rightContentElement
-      );
+        rightContentElement,
+      )
 
-      this.processOutInstance = processOutInstance;
-      this.paymentConfig = paymentConfig;
-      this.paymentMethod = paymentMethod;
-      this.theme = theme;
-      this.resetContainerHtml = resetContainerHtml;
+      this.processOutInstance = processOutInstance
+      this.paymentConfig = paymentConfig
+      this.paymentMethod = paymentMethod
+      this.theme = theme
+      this.resetContainerHtml = resetContainerHtml
 
-      super.appendChildren(this.getChildrenElement());
+      super.appendChildren(this.getChildrenElement())
     }
 
     private getChildrenElement() {
@@ -51,80 +51,76 @@ module ProcessOut {
           },
           textContent: `${Translations.getText(
             "pay-button-text",
-            this.paymentConfig.locale
+            this.paymentConfig.locale,
           )} ${this.paymentConfig.invoiceDetails.amount} ${
             this.paymentConfig.invoiceDetails.currency
           }`,
         },
-      ]);
+      ])
 
       if (this.theme && this.theme.payButtonColor) {
-        payButton.style.backgroundColor = this.theme.payButtonColor;
+        payButton.style.backgroundColor = this.theme.payButtonColor
       }
 
       if (this.theme && this.theme.payButtonTextColor) {
-        payButton.style.color = this.theme.payButtonTextColor;
+        payButton.style.color = this.theme.payButtonTextColor
       }
 
-      HTMLElements.appendChildren(wrapper, [payButton]);
+      HTMLElements.appendChildren(wrapper, [payButton])
 
-      payButton.addEventListener("click", this.handleApmPayment.bind(this));
+      payButton.addEventListener("click", this.handleApmPayment.bind(this))
 
-      return wrapper;
+      return wrapper
     }
 
     private handleApmPayment() {
-      const { apm_customer_token } = this.paymentMethod;
-      const { clientSecret, invoiceId } = this.paymentConfig;
+      const { apm_customer_token } = this.paymentMethod
+      const { clientSecret, invoiceId } = this.paymentConfig
 
       const cardPaymentOptions = {
         authorize_only: !this.paymentConfig.capturePayments,
-        allow_fallback_to_sale: true,
-      };
+        allow_fallback_to_sale: this.paymentConfig.allowFallbackToSale,
+      }
 
       const requestOptions = {
         clientSecret,
-      };
+      }
 
       const actionHandlerOptions = new ActionHandlerOptions(
         apm_customer_token.gateway_name,
-        apm_customer_token.gateway_logo.dark_url.raster
-      );
+        apm_customer_token.gateway_logo.dark_url.raster,
+      )
 
-      this.setButtonLoading();
+      this.setButtonLoading()
 
       if (apm_customer_token.redirect_url) {
         return this.processOutInstance.handleAction(
           apm_customer_token.redirect_url,
-          (paymentToken) => {
+          paymentToken => {
             this.processOutInstance.makeCardPayment(
               invoiceId,
               paymentToken,
               cardPaymentOptions,
-              (invoiceId) => {
+              invoiceId => {
                 this.resetContainerHtml().appendChild(
-                  new DynamicCheckoutPaymentSuccessView(this.paymentConfig)
-                    .element
-                );
+                  new DynamicCheckoutPaymentSuccessView(this.paymentConfig).element,
+                )
 
-                DynamicCheckoutEventsUtils.dispatchPaymentSuccessEvent(
-                  invoiceId
-                );
+                DynamicCheckoutEventsUtils.dispatchPaymentSuccessEvent(invoiceId)
               },
-              (error) => {
+              error => {
                 this.resetContainerHtml().appendChild(
-                  new DynamicCheckoutPaymentErrorView(this.paymentConfig)
-                    .element
-                );
+                  new DynamicCheckoutPaymentErrorView(this.paymentConfig).element,
+                )
 
-                DynamicCheckoutEventsUtils.dispatchPaymentErrorEvent(error);
+                DynamicCheckoutEventsUtils.dispatchPaymentErrorEvent(error)
               },
-              requestOptions
-            );
+              requestOptions,
+            )
           },
           DynamicCheckoutEventsUtils.dispatchPaymentErrorEvent,
-          actionHandlerOptions
-        );
+          actionHandlerOptions,
+        )
       }
 
       this.processOutInstance.makeCardPayment(
@@ -133,41 +129,41 @@ module ProcessOut {
         cardPaymentOptions,
         this.handlePaymentSuccess.bind(this),
         this.handlePaymentError.bind(this),
-        requestOptions
-      );
+        requestOptions,
+      )
     }
 
     private handlePaymentSuccess(invoiceId: string) {
       this.resetContainerHtml().appendChild(
-        new DynamicCheckoutPaymentSuccessView(this.paymentConfig).element
-      );
+        new DynamicCheckoutPaymentSuccessView(this.paymentConfig).element,
+      )
       DynamicCheckoutEventsUtils.dispatchPaymentSuccessEvent({
         invoiceId,
         returnUrl: this.paymentConfig.invoiceDetails.return_url,
-      });
+      })
     }
 
     private handlePaymentError(error) {
       this.resetContainerHtml().appendChild(
-        new DynamicCheckoutPaymentErrorView(this.paymentConfig).element
-      );
-      DynamicCheckoutEventsUtils.dispatchPaymentErrorEvent(error);
+        new DynamicCheckoutPaymentErrorView(this.paymentConfig).element,
+      )
+      DynamicCheckoutEventsUtils.dispatchPaymentErrorEvent(error)
     }
 
     private setButtonLoading() {
       const payButton = document.getElementById(
-        `dco-saved-apm-pay-button-${this.paymentMethod.display.name}`
-      ) as HTMLButtonElement;
+        `dco-saved-apm-pay-button-${this.paymentMethod.display.name}`,
+      ) as HTMLButtonElement
 
-      payButton.disabled = true;
-      payButton.textContent = "";
+      payButton.disabled = true
+      payButton.textContent = ""
 
       const spinner = HTMLElements.createElement({
         tagName: "span",
         classNames: ["dco-payment-method-button-pay-button-spinner"],
-      });
+      })
 
-      HTMLElements.appendChildren(payButton, [spinner]);
+      HTMLElements.appendChildren(payButton, [spinner])
     }
   }
 }

@@ -25,5 +25,5 @@ module ProcessOut {
     "city-label": "City",
     "postcode-label": "Postal code",
     "state-label": "State",
-  };
+  }
 }

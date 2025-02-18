@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "removeComments": true,
-    "outFile": "../../scripts/modal.js",
+    "outFile": "../../dist/modal.js",
     "allowJs": true,
     "target": "es5",
-    "lib": ["dom", "es2015"]
+    "lib": ["dom", "es2015"],
+    "skipLibCheck": true
   },
   "include": [
     "../polyfills/base64.polyfill.min.js",

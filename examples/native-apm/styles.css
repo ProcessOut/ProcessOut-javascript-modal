@@ -1,0 +1,14 @@
+body {
+  width: 100%;
+  font-family: "Arial";
+  display: flex;
+  justify-content: center;
+}
+
+h1 {
+  margin-bottom: 50px;
+}
+
+#napm-container {
+  width: 400px;
+}

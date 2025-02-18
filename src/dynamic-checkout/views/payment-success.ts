@@ -2,9 +2,9 @@
 
 module ProcessOut {
   export class DynamicCheckoutPaymentSuccessView {
-    public element: Element;
+    public element: Element
 
-    constructor(paymentConfig: DynamicCheckoutPaymentConfigType) {
+    constructor(paymentConfig: DynamicCheckoutPublicConfig) {
       const [element, image, message] = HTMLElements.createMultipleElements([
         {
           tagName: "div",
@@ -20,16 +20,13 @@ module ProcessOut {
         {
           tagName: "p",
           classNames: ["dco-card-payment-success-text"],
-          textContent: Translations.getText(
-            "payment-success-message",
-            paymentConfig.locale
-          ),
+          textContent: Translations.getText("payment-success-message", paymentConfig.locale),
         },
-      ]);
+      ])
 
-      HTMLElements.appendChildren(element, [image, message]);
+      HTMLElements.appendChildren(element, [image, message])
 
-      this.element = element;
+      this.element = element
     }
   }
 }

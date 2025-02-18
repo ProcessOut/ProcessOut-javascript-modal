@@ -1,21 +1,13 @@
 module ProcessOut {
-  export const billingAddressUnitsData = (
-    paymentConfig: DynamicCheckoutPaymentConfigType
-  ) => {
+  export const billingAddressUnitsData = (paymentConfig: DynamicCheckoutPublicConfig) => {
     return {
       street1: {
         unit: "street1",
-        placeholder: Translations.getText(
-          "street1-label",
-          paymentConfig.locale
-        ),
+        placeholder: Translations.getText("street1-label", paymentConfig.locale),
       },
       street2: {
         unit: "street2",
-        placeholder: Translations.getText(
-          "street2-label",
-          paymentConfig.locale
-        ),
+        placeholder: Translations.getText("street2-label", paymentConfig.locale),
       },
       city: {
         unit: "city",
@@ -23,17 +15,14 @@ module ProcessOut {
       },
       postcode: {
         unit: "postcode",
-        placeholder: Translations.getText(
-          "postcode-label",
-          paymentConfig.locale
-        ),
+        placeholder: Translations.getText("postcode-label", paymentConfig.locale),
       },
       state: {
         unit: "state",
         placeholder: Translations.getText("state-label", paymentConfig.locale),
       },
-    };
-  };
+    }
+  }
 
   export const billingAddressConfig = {
     AC: {
@@ -1305,5 +1294,5 @@ module ProcessOut {
       name: "Zimbabwe",
       units: ["street1", "street2", "city"],
     },
-  };
+  }
 }

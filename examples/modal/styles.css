@@ -1,0 +1,23 @@
+html {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.container {
+  margin: 0 auto;
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.processout-modal-button {
+  text-decoration: none;
+  width: 200px;
+  height: 30px;
+  background-color: #216ef3;
+  color: #fff;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

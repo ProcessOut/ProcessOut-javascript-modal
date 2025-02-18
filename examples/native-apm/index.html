@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>ProcessOut.js Native APM</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="napm-container"></div>
+    <script src="../../dist/processout.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // You need to replace these values with your own
+        const projectId = "test-proj_qEi1u5BwoYcZb6mOMKDWIm4mpqKCq6bN"
+        const gatewayConfigurationId = "gway_conf_2puMFv3iwrPSLqslIfVcvzhFWZzmTHTy.sandbox"
+        const invoiceId = "iv_PMIMKkaXcZXxnXPXzKQzHOu8jz10CQgW"
+
+        const client = new ProcessOut.ProcessOut(projectId)
+
+        const nativeApm = client.setupNativeApm({
+          gatewayConfigurationId,
+          invoiceId,
+        })
+
+        nativeApm.mount("#napm-container")
+
+        // You can customize the widget theme
+        // nativeApm.setTheme({
+        //   buttons: {
+        //     default: {
+        //       backgroundColor: 'green'
+        //     }
+        //   }
+        // });
+
+        // You can prefill user data
+        // nativeApm.prefillData({
+        //   email: 'john@doe.com'
+        // })
+
+        // Native APM widget dispatches event on every major action. Here are event handlers to test them
+        window.addEventListener("processout_native_apm_loading", function (e) {
+          console.log("Payment Status (outside widget): Widget loading")
+        })
+
+        window.addEventListener("processout_native_apm_ready", function (e) {
+          console.log("Payment Status (outside widget): Widget ready")
+        })
+
+        window.addEventListener("processout_native_apm_payment_init", function (e) {
+          console.log("Payment Status (outside widget): Payment initialized")
+        })
+
+        window.addEventListener("processout_native_apm_payment_additional_input", function (e) {
+          console.log("Payment Status (outside widget): Additional input needed")
+        })
+
+        window.addEventListener("processout_native_apm_payment_success", function (e) {
+          console.log("Payment Status (outside widget): Payment success")
+        })
+
+        window.addEventListener("processout_native_apm_payment_error", function (e) {
+          console.log("Payment Status (outside widget): Payment error")
+        })
+
+        window.addEventListener("processout_native_apm_gateway_configuration_error", function (e) {
+          console.log("Payment Status (outside widget): Gateway configuration error")
+        })
+      })
+    </script>
+  </body>
+</html>

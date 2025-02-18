@@ -1,0 +1,109 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>ProcessOut.js Card Form</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <form action="" method="POST" id="card-form">
+        <input type="text" placeholder="John Smith" id="card-form-name" class="form-input" />
+        <div
+          class="form-input"
+          data-processout-input="cc-number"
+          data-processout-placeholder="4242 4242 4242 4242"
+        ></div>
+        <div class="form-input-group">
+          <div
+            class="form-input"
+            data-processout-input="cc-exp"
+            data-processout-placeholder="MM / YY"
+          ></div>
+          <div
+            class="form-input"
+            data-processout-input="cc-cvc"
+            data-processout-placeholder="CVC"
+          ></div>
+        </div>
+        <button type="submit" class="submit-button">Pay</button>
+        <div className="form-messages">
+          <div id="errors"></div>
+          <div id="success"></div>
+        </div>
+      </form>
+    </div>
+    <script src="../../dist/processout.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // You need to replace these values with your own
+        const projectId = "test-proj_qEi1u5BwoYcZb6mOMKDWIm4mpqKCq6bN"
+        const invoiceId = "iv_p3t60k3m1vTvBLq4bnSgP4Ka8Vxo8KLK"
+
+        const client = new ProcessOut.ProcessOut(projectId)
+        const formElement = document.getElementById("card-form")
+
+        client.setupForm(
+          formElement,
+          {
+            style: {
+              fontSize: "14px",
+              "::placeholder": {
+                color: "#ababab",
+              },
+            },
+          },
+          function (form) {
+            form.getNumberField().on("focus", function (e) {
+              document.getElementById("errors").innerHTML = ""
+            })
+
+            form.getExpiryField().on("focus", function (e) {
+              document.getElementById("errors").innerHTML = ""
+            })
+
+            form.getCVCField().on("focus", function (e) {
+              document.getElementById("errors").innerHTML = ""
+            })
+
+            form.addEventListener("submit", function (e) {
+              e.preventDefault()
+
+              client.tokenize(
+                form,
+                {
+                  name: document.getElementById("card-form-name").value,
+                  zip: "10018",
+                },
+                function (token) {
+                  console.log("Tokenization Success", token)
+
+                  client.makeCardPayment(
+                    invoiceId,
+                    token,
+                    {
+                      authorize_only: true,
+                    },
+                    function (iv) {
+                      console.log("Payment Success")
+                    },
+                    function (err) {
+                      console.log("Payment Error", err)
+                    },
+                  )
+                },
+                function (err) {
+                  console.log("Tokenization Error", err)
+                },
+              )
+
+              return false
+            })
+          },
+          function (err) {
+            console.log("Setup Form Error", err)
+          },
+        )
+      })
+    </script>
+  </body>
+</html>

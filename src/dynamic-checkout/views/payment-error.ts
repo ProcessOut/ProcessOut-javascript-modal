@@ -2,12 +2,9 @@
 
 module ProcessOut {
   export class DynamicCheckoutPaymentErrorView {
-    public element: Element;
+    public element: Element
 
-    constructor(
-      paymentConfig: DynamicCheckoutPaymentConfigType,
-      errorMessage?: string
-    ) {
+    constructor(paymentConfig: DynamicCheckoutPublicConfig, errorMessage?: string) {
       const [element, image, message] = HTMLElements.createMultipleElements([
         {
           tagName: "div",
@@ -24,14 +21,13 @@ module ProcessOut {
           tagName: "div",
           classNames: ["dco-card-payment-error-text"],
           textContent:
-            errorMessage ||
-            Translations.getText("payment-error-message", paymentConfig.locale),
+            errorMessage || Translations.getText("payment-error-message", paymentConfig.locale),
         },
-      ]);
+      ])
 
-      HTMLElements.appendChildren(element, [image, message]);
+      HTMLElements.appendChildren(element, [image, message])
 
-      this.element = element;
+      this.element = element
     }
   }
 }

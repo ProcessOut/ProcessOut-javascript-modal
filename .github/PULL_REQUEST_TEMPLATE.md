@@ -9,6 +9,12 @@
 ## Demo
 <!--- If applicable, provide a demo of the solution/fix implemented in this PR. -->
 
+## Checklist
+
+- [ ] I bumped the version of the project using `yarn bump-version`
+- [ ] I have checked the code for any potential issues
+- [ ] I tested my changes in the browser
+
 ## Notes
 <!--- Include any extra notes you may want the reviewer to know -->
 

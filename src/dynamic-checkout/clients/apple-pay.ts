@@ -2,82 +2,74 @@
 
 module ProcessOut {
   export class ApplePayClient {
-    processOutInstance: ProcessOut;
-    paymentConfig: DynamicCheckoutPaymentConfigType;
+    processOutInstance: ProcessOut
+    paymentConfig: DynamicCheckoutPublicConfig
 
-    constructor(
-      processOutInstance: ProcessOut,
-      paymentConfig: DynamicCheckoutPaymentConfigType
-    ) {
-      this.processOutInstance = processOutInstance;
-      this.paymentConfig = paymentConfig;
+    constructor(processOutInstance: ProcessOut, paymentConfig: DynamicCheckoutPublicConfig) {
+      this.processOutInstance = processOutInstance
+      this.paymentConfig = paymentConfig
     }
 
     public loadButton(
       buttonContainer: HTMLElement,
       invoiceData: Invoice,
-      getViewContainer: () => HTMLElement
+      getViewContainer: () => HTMLElement,
     ) {
-      const applePayScript = document.createElement("script");
-      const initializeApplePay = this.initializeApplePay.bind(this);
+      const applePayScript = document.createElement("script")
+      const initializeApplePay = this.initializeApplePay.bind(this)
 
-      applePayScript.src = applePaySdkUrl;
+      applePayScript.src = applePaySdkUrl
       applePayScript.onload = () => {
-        buttonContainer.innerHTML = `<apple-pay-button buttonstyle="black" type="plain" locale="en-US"></apple-pay-button>`;
-        initializeApplePay(invoiceData, buttonContainer, getViewContainer);
-      };
+        buttonContainer.innerHTML = `<apple-pay-button buttonstyle="black" type="plain" locale="en-US"></apple-pay-button>`
+        initializeApplePay(invoiceData, buttonContainer, getViewContainer)
+      }
 
-      document.head.appendChild(applePayScript);
+      document.head.appendChild(applePayScript)
     }
 
     private initializeApplePay(
       invoiceData: Invoice,
       buttonContainer: HTMLDivElement,
-      getViewContainer: () => HTMLElement
+      getViewContainer: () => HTMLElement,
     ) {
-      const tokenizeApplePay = this.tokenizeApplePay.bind(this);
+      const tokenizeApplePay = this.tokenizeApplePay.bind(this)
 
-      const applePayPaymentMethodData =
-        this.getApplePayPaymentMethodData(invoiceData);
+      const applePayPaymentMethodData = this.getApplePayPaymentMethodData(invoiceData)
 
       this.processOutInstance.applePay.checkAvailability(
         function (err) {
           if (err) {
-            console.log(err);
+            console.log(err)
           } else {
-            buttonContainer.classList.add("visible");
+            buttonContainer.classList.add("visible")
 
-            document
-              .querySelector("apple-pay-button")
-              .addEventListener("click", () => {
-                tokenizeApplePay(invoiceData, getViewContainer);
-              });
+            document.querySelector("apple-pay-button").addEventListener("click", () => {
+              tokenizeApplePay(invoiceData, getViewContainer)
+            })
           }
         },
-        { merchantApplePayCertificateId: applePayPaymentMethodData.merchant_id }
-      );
+        { merchantApplePayCertificateId: applePayPaymentMethodData.merchant_id },
+      )
     }
 
     private getSupportedNetworks(invoiceData: Invoice) {
-      let supportedNetworks = [];
+      let supportedNetworks = []
 
-      const applePayPaymentMethodData =
-        this.getApplePayPaymentMethodData(invoiceData);
+      const applePayPaymentMethodData = this.getApplePayPaymentMethodData(invoiceData)
 
-      applePayPaymentMethodData.supported_networks.forEach((network) => {
+      applePayPaymentMethodData.supported_networks.forEach(network => {
         if (networksMap[network]) {
-          supportedNetworks.push(networksMap[network]);
+          supportedNetworks.push(networksMap[network])
         }
-      });
+      })
 
-      return supportedNetworks;
+      return supportedNetworks
     }
 
     private createApplePaySession(invoiceData: Invoice) {
-      const supportedNetworks = this.getSupportedNetworks(invoiceData);
+      const supportedNetworks = this.getSupportedNetworks(invoiceData)
 
-      const applePayPaymentMethodData =
-        this.getApplePayPaymentMethodData(invoiceData);
+      const applePayPaymentMethodData = this.getApplePayPaymentMethodData(invoiceData)
 
       const session = this.processOutInstance.applePay.newSession(
         {
@@ -93,85 +85,87 @@ module ProcessOut {
           applePaySessionVersion: 14,
         },
         DynamicCheckoutEventsUtils.dispatchApplePayNewSessionEvent,
-        DynamicCheckoutEventsUtils.dispatchApplePaySessionError
-      );
+        DynamicCheckoutEventsUtils.dispatchApplePaySessionError,
+      )
 
       session.onpaymentauthorizedPostprocess =
-        DynamicCheckoutEventsUtils.dispatchApplePayAuthorizedPostProcessEvent;
+        DynamicCheckoutEventsUtils.dispatchApplePayAuthorizedPostProcessEvent
 
-      return session;
+      return session
     }
 
-    private tokenizeApplePay(
-      invoiceData: Invoice,
-      getViewContainer: () => HTMLElement
-    ) {
-      const session = this.createApplePaySession(invoiceData);
-      const makeApplePayPayment = this.makeApplePayPayment.bind(this);
+    private tokenizeApplePay(invoiceData: Invoice, getViewContainer: () => HTMLElement) {
+      const session = this.createApplePaySession(invoiceData)
+      const makeApplePayPayment = this.makeApplePayPayment.bind(this)
 
       this.processOutInstance.tokenize(
         session,
         {},
         function (card) {
-          session.completePayment(0);
+          session.completePayment(0)
 
-          DynamicCheckoutEventsUtils.dispatchTokenizePaymentSuccessEvent(card);
+          DynamicCheckoutEventsUtils.dispatchTokenizePaymentSuccessEvent(card)
 
           // The casting is needed since Apple Pay returns card object instead of card token for some reason
           // You can check the implementation of tokenize function
-          const cardToken = (card as unknown as Record<string, any>).id;
+          const cardToken = (card as unknown as Record<string, any>).id
 
-          makeApplePayPayment(cardToken, invoiceData, getViewContainer);
+          makeApplePayPayment(cardToken, invoiceData, getViewContainer)
         },
         function (err) {
-          session.completePayment(1);
+          session.completePayment(1)
 
-          DynamicCheckoutEventsUtils.dispatchTokenizePaymentErrorEvent(err);
+          DynamicCheckoutEventsUtils.dispatchTokenizePaymentErrorEvent(err)
 
           getViewContainer().innerHTML = `
             <div class="dco-card-payment-error-text">
               Something went wrong. Please try again.
             </div>
-          `;
-        }
-      );
+          `
+        },
+      )
     }
 
-    private makeApplePayPayment(cardToken: string, invoiceData: Invoice) {
+    private makeApplePayPayment(
+      cardToken: string,
+      invoiceData: Invoice,
+      getViewContainer: () => HTMLElement,
+    ) {
       this.processOutInstance.makeCardPayment(
         invoiceData.id,
         cardToken,
         {
           authorize_only: !this.paymentConfig.capturePayments,
+          allow_fallback_to_sale: this.paymentConfig.allowFallbackToSale,
         },
         function (invoiceId) {
-          this.resetContainerHtml().appendChild(
-            new DynamicCheckoutPaymentSuccessView(this.paymentConfig).element
-          );
+          getViewContainer().appendChild(
+            new DynamicCheckoutPaymentSuccessView(this.paymentConfig).element,
+          )
           DynamicCheckoutEventsUtils.dispatchPaymentSuccessEvent({
             invoiceId,
             returnUrl: this.paymentConfig.invoiceDetails.return_url,
-          });
+          })
         },
         function (error) {
-          this.resetContainerHtml().appendChild(
-            new DynamicCheckoutPaymentErrorView(this.paymentConfig).element
-          );
-          DynamicCheckoutEventsUtils.dispatchPaymentErrorEvent(error);
-        }
-      );
+          getViewContainer().appendChild(
+            new DynamicCheckoutPaymentErrorView(this.paymentConfig).element,
+          )
+          DynamicCheckoutEventsUtils.dispatchPaymentErrorEvent(error)
+        },
+      )
     }
 
     private getApplePayPaymentMethodData(invoiceData: Invoice) {
-      let applePayPaymentMethodData;
+      let applePayPaymentMethodData
 
-      invoiceData.payment_methods.forEach((method) => {
+      invoiceData.payment_methods.forEach(method => {
         if (method.type === "applepay") {
-          applePayPaymentMethodData = method.applepay;
+          applePayPaymentMethodData = method.applepay
         }
-      });
+      })
 
-      return applePayPaymentMethodData;
+      return applePayPaymentMethodData
     }
   }
 }

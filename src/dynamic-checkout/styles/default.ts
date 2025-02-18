@@ -481,4 +481,4 @@ const defaultStyles = `
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
   }
-`;
+`

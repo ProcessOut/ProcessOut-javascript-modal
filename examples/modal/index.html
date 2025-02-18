@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>ProcessOut.js Modal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <a
+        href="https://checkout.processout.com/proj_DGZC4vO1dS5xFh6eoQ7L3dVUrMAH1Bbu"
+        class="processout-modal-button"
+        >Pay now</a
+      ><br />
+      <a
+        href="https://checkout.processout.com/plan/proj_gAO1Uu0ysZJvDuUpOGPkUBeE3pGalk3x/test"
+        class="processout-modal-button"
+        >Pay subscription</a
+      >
+    </div>
+    <script src="../../dist/modal.js"></script>
+    <script>
+      const processOut = new ProcessOut.ProcessOut("test-proj_gAO1Uu0ysZJvDuUpOGPkUBeE3pGalk3x")
+      const modal = processOut.newModal({
+        onReady: function (modal) {
+          modal.show({
+            onShow: function (modal) {
+              console.log("onShow")
+            },
+            onHide: function (modal) {
+              console.log("onHide")
+            },
+            onError: function (modal, err) {
+              console.log("onError", err)
+            },
+            onPayment: function (modal, iv) {
+              console.log("onPayment", iv)
+            },
+            onPaymentError: function (modal, err) {
+              console.log("onPaymentError", err)
+            },
+          })
+        },
+        onError: function (err) {
+          console.log("onError", err)
+        },
+        amount: "5.00",
+        currency: "USD",
+        name: "test invoice",
+      })
+    </script>
+  </body>
+</html>

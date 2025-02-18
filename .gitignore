@@ -31,4 +31,4 @@ node_modules
 .eslintcache
 
 # Dist files
-scripts
+dist

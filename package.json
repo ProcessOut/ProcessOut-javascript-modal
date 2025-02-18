@@ -3,32 +3,39 @@
   "version": "1.0.0",
   "description": "ProcessOut.js is a JavaScript library for ProcessOut's payment processing API.",
   "scripts": {
-    "build:processout": "tsc -p src/processout && uglifyjs --compress --keep-fnames --ie8 scripts/processout.js -o scripts/processout.js",
-    "build:modal": "tsc -p src/modal && uglifyjs --compress --keep-fnames --ie8 scripts/modal.js -o scripts/modal.js",
-    "build:test": "yarn build && yarn processout:debug",
-    "build": "yarn build:processout & yarn build:modal",
+    "build:processout": "tsc -p src/processout && uglifyjs --compress --keep-fnames --ie8 dist/processout.js -o dist/processout.js",
+    "build:modal": "tsc -p src/modal && uglifyjs --compress --keep-fnames --ie8 dist/modal.js -o dist/modal.js",
+    "build:test": "yarn build:processout & yarn build:modal && yarn append-debug-mode && yarn append-version",
+    "build": "yarn build:processout & yarn build:modal && yarn append-version",
     "verify": "yarn lint & yarn build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(ts|json)\"",
     "format:check": "prettier --ignore-path .gitignore --check \"**/*.+(ts|json)\"",
-    "processout:debug": "echo 'ProcessOut.DEBUG = true;' >> scripts/processout.js && echo 'ProcessOut.DEBUG = true;' >> scripts/modal.js",
-    "prepare": "husky"
+    "dev": "concurrently \"vite\" \"yarn watch-processout\"",
+    "watch-processout": "tsc-watch -p src/processout --onSuccess 'yarn append-dev-metadata'",
+    "append-dev-metadata": "yarn append-debug-mode && yarn append-version && yarn append-debug-host",
+    "append-debug-mode": "node scripts/append-script-metadata.js --debug",
+    "append-debug-host": "node scripts/append-script-metadata.js --debug-host",
+    "append-version": "node scripts/append-script-metadata.js --version",
+    "bump-version": "yarn version"
   },
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610",
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@typescript-eslint/eslint-plugin": "^8.23.0",
     "@typescript-eslint/parser": "^8.23.0",
+    "concurrently": "^9.1.2",
     "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
     "globals": "^15.14.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "prettier": "^3.4.2",
+    "tsc-watch": "^6.2.1",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.23.0",
-    "uglify-js": "3.8.0"
+    "uglify-js": "3.8.0",
+    "vite": "^6.1.0"
   },
   "lint-staged": {
     "*.{ts,json}": "eslint --cache --fix --no-warn-ignored"

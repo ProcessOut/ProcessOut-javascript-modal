@@ -1,0 +1,18 @@
+html {
+  font-size: 14px;
+}
+
+body {
+  width: 100%;
+  font-family: "Arial";
+  display: flex;
+  justify-content: center;
+}
+
+h1 {
+  margin-bottom: 50px;
+}
+
+#dynamic-cko-container {
+  width: 400px;
+}

@@ -1,14 +1,14 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import eslintConfigPrettier from "eslint-config-prettier";
+import globals from "globals"
+import pluginJs from "@eslint/js"
+import tseslint from "typescript-eslint"
+import eslintConfigPrettier from "eslint-config-prettier"
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  {files: ["**/*.{js,mjs,cjs,ts}"]},
-  {files: ["**/*.js"], languageOptions: {sourceType: "script"}},
-  {languageOptions: { globals: globals.browser }},
-  {ignores: ["scripts/*", "node_modules/*", "src/polyfills/*"]},
+  { files: ["**/*.{js,mjs,cjs,ts}"] },
+  { files: ["**/*.js"], languageOptions: { sourceType: "script" } },
+  { languageOptions: { globals: globals.browser } },
+  { ignores: ["dist/*", "node_modules/*", "src/polyfills/*"] },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -29,7 +29,7 @@ export default [
       "@typescript-eslint/no-unused-expressions": "off",
       "@typescript-eslint/no-unsafe-function-type": "off",
       "@typescript-eslint/ban-ts-comment": "off",
-    }
+    },
   },
-  eslintConfigPrettier
-];
+  eslintConfigPrettier,
+]

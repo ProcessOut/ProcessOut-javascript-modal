@@ -1,44 +1,44 @@
 /// <reference path="./references.ts" />
 
 type GatewayConfiguration = {
-  success: boolean;
+  success: boolean
   native_apm: {
     gateway: {
-      customer_action_image_url: string;
-      customer_action_message: string;
-      display_name: string;
-      logo_url: string;
-    };
+      customer_action_image_url: string
+      customer_action_message: string
+      display_name: string
+      logo_url: string
+    }
     invoice: {
-      amount: string;
-      currency_code: string;
-    };
-    parameters: Array<NativeApmInputData>;
-    parameter_values?: Record<string, string>;
-  };
-};
+      amount: string
+      currency_code: string
+    }
+    parameters: Array<NativeApmInputData>
+    parameter_values?: Record<string, string>
+  }
+}
 
-type PrefilledData = Record<string, string>;
+type PrefilledData = Record<string, string>
 
 type NativeApmPaymentResponse = {
-  success: boolean;
+  success: boolean
   native_apm: {
-    parameterDefinitions: Array<NativeApmInputData>;
-    parameterValues?: Record<string, string>;
-    state: string;
-  };
-  error_type?: string;
-  invalid_fields?: Array<Record<string, string>>;
-  message?: string;
-};
+    parameterDefinitions: Array<NativeApmInputData>
+    parameterValues?: Record<string, string>
+    state: string
+  }
+  error_type?: string
+  invalid_fields?: Array<Record<string, string>>
+  message?: string
+}
 
 type NativeApmCapturePaymentResponse = {
   native_apm?: {
-    state: string;
-  };
-  success: boolean;
-  message?: string;
-};
+    state: string
+  }
+  success: boolean
+  message?: string
+}
 
 /**
  * ProcessOut module/namespace
@@ -52,69 +52,66 @@ module ProcessOut {
      * ProcessOut instance
      * @type {ProcessOut}
      */
-    processOutInstance: ProcessOut;
+    processOutInstance: ProcessOut
 
     /**
      * Instance of JS library which handles markdown
      * @type {any}
      */
-    markdownLibraryInstance: any;
+    markdownLibraryInstance: any
 
     /**
      * Native APM container element for mounting the widget
      * @type {Element}
      */
-    napmContainer: Element;
+    napmContainer: Element
 
     /**
      * Native APM widget wrapper element for styling purposes
      * @type {Element}
      */
-    widgetWrapper: Element;
+    widgetWrapper: Element
 
     /**
      * Configuration of Native APM payment
      * @type {NativeApmPaymentConfig}
      */
-    paymentConfig: NativeApmPaymentConfig;
+    paymentConfig: NativeApmPaymentConfig
 
     /**
      * Configuration of Native APM gateway
      * @type {GatewayConfiguration}
      */
-    gatewayConfiguration: GatewayConfiguration;
+    gatewayConfiguration: GatewayConfiguration
 
     /**
      * Theme of the Native APM widget
      * @type {NativeApmThemeConfig}
      */
-    theme: NativeApmThemeConfig;
+    theme: NativeApmThemeConfig
 
     /**
      * Prefilled data of the user
      * @type {PrefilledData}
      */
-    prefilledData: PrefilledData = {};
+    prefilledData: PrefilledData = {}
 
     /**
      * Date of first capture
      * @type {number}
      */
-    captureStart = null;
+    captureStart = null
 
     /**
      * NativeAPM constructor
      * @param  {NativeApmConfig} config
      */
-    constructor(
-      processOutInstance: ProcessOut,
-      paymentConfig: NativeApmPaymentConfigType
-    ) {
-      this.processOutInstance = processOutInstance;
-      this.paymentConfig = new NativeApmPaymentConfig(paymentConfig);
-      this.theme = new NativeApmThemeConfig();
-      this.loadMarkdownLibrary();
-      this.loadQrCodesLibrary();
+    constructor(processOutInstance: ProcessOut, paymentConfig: NativeApmPaymentConfigType) {
+      this.processOutInstance = processOutInstance
+      this.paymentConfig = new NativeApmPaymentConfig(paymentConfig)
+      this.theme = new NativeApmThemeConfig()
+      this.loadMarkdownLibrary()
+      this.loadQrCodesLibrary()
     }
 
     /**
@@ -123,58 +120,58 @@ module ProcessOut {
      */
     public mount(containerSelector: string | HTMLElement) {
       if (typeof containerSelector === "string") {
-        this.napmContainer = document.querySelector(containerSelector);
+        this.napmContainer = document.querySelector(containerSelector)
       } else {
-        this.napmContainer = containerSelector;
+        this.napmContainer = containerSelector
       }
 
       if (!this.napmContainer) {
         throw new Exception(
           "default",
-          "Element with this selector does not exist. You must provide valid element selector"
-        );
+          "Element with this selector does not exist. You must provide valid element selector",
+        )
       }
 
-      this.loadView(new NativeApmSpinner(this.theme).getSpinnerElement());
+      this.loadView(new NativeApmSpinner(this.theme).getSpinnerElement())
 
       this.getGatewayConfiguration({
         onFetch: EventsUtils.dispatchWidgetLoadingEvent,
         onSuccess: this.onGatewayConfigurationSuccess.bind(this),
         onError: this.onGatewayConfigurationError.bind(this),
-      });
+      })
     }
 
     /**
      * This function gets gateway configuration of the Native APM widget
      */
     private getGatewayConfiguration(actions: {
-      onFetch: Function;
-      onSuccess: Function;
-      onError: Function;
+      onFetch: Function
+      onSuccess: Function
+      onError: Function
     }) {
-      const paymentConfig = this.paymentConfig.getConfig();
+      const paymentConfig = this.paymentConfig.getConfig()
 
-      actions.onFetch();
+      actions.onFetch()
 
       this.processOutInstance.apiRequest(
         "GET",
         `invoices/${paymentConfig.invoiceId}/native-payment/${paymentConfig.gatewayConfigurationId}`,
         {},
         actions.onSuccess.bind(this),
-        actions.onError.bind(this)
-      );
+        actions.onError.bind(this),
+      )
     }
 
     private onGatewayConfigurationSuccess(data: GatewayConfiguration) {
       if (!data.success) {
-        const errorView = new NativeApmErrorView({}, this.theme);
+        const errorView = new NativeApmErrorView({}, this.theme)
 
-        EventsUtils.dispatchGatewayConfigurationErrorEvent(data);
+        EventsUtils.dispatchGatewayConfigurationErrorEvent(data)
 
-        return this.loadView(errorView.getViewElement());
+        return this.loadView(errorView.getViewElement())
       }
 
-      this.gatewayConfiguration = data;
+      this.gatewayConfiguration = data
 
       if (
         this.gatewayConfiguration.native_apm &&
@@ -184,12 +181,12 @@ module ProcessOut {
           this.gatewayConfiguration.native_apm,
           this.proceedPayment.bind(this),
           this.theme,
-          this.prefilledData
-        );
+          this.prefilledData,
+        )
 
-        EventsUtils.dispatchWidgetReadyEvent();
+        EventsUtils.dispatchWidgetReadyEvent()
 
-        return this.loadView(nativeApmFormView.getViewElement());
+        return this.loadView(nativeApmFormView.getViewElement())
       }
 
       if (
@@ -201,33 +198,33 @@ module ProcessOut {
           this.markdownLibraryInstance,
           this.theme,
           this.capturePayment.bind(this),
-          this.gatewayConfiguration.native_apm.parameter_values
-        );
+          this.gatewayConfiguration.native_apm.parameter_values,
+        )
 
-        EventsUtils.dispatchPaymentInitEvent();
+        EventsUtils.dispatchPaymentInitEvent()
 
-        return this.loadView(pendingView.getViewElement());
+        return this.loadView(pendingView.getViewElement())
       }
     }
 
     private onGatewayConfigurationError(
       req: XMLHttpRequest,
       e: ProgressEvent,
-      errorCode: ApiRequestError
+      errorCode: ApiRequestError,
     ) {
-      const errorView = new NativeApmErrorView({}, this.theme);
+      const errorView = new NativeApmErrorView({}, this.theme)
 
-      let errorData = req.response;
+      let errorData = req.response
       if (!req.response && errorCode)
         errorData = {
           success: false,
           error_type: errorCode,
           message: Translator.translateError(errorCode),
-        };
+        }
 
-      EventsUtils.dispatchGatewayConfigurationErrorEvent(errorData);
+      EventsUtils.dispatchGatewayConfigurationErrorEvent(errorData)
 
-      return this.loadView(errorView.getViewElement());
+      return this.loadView(errorView.getViewElement())
     }
 
     /**
@@ -236,16 +233,12 @@ module ProcessOut {
     public proceedPayment(
       paymentData: Record<string, string>,
       onFormSubmitFinished: Function,
-      onFormApiValidationError: Function
+      onFormApiValidationError: Function,
     ) {
-      const paymentConfig = this.paymentConfig.getConfig();
+      const paymentConfig = this.paymentConfig.getConfig()
 
       const handlePaymentSuccessCallback = (data: NativeApmPaymentResponse) =>
-        this.handlePaymentSuccess(
-          data,
-          onFormSubmitFinished,
-          onFormApiValidationError
-        );
+        this.handlePaymentSuccess(data, onFormSubmitFinished, onFormApiValidationError)
 
       this.processOutInstance.apiRequest(
         "POST",
@@ -257,8 +250,8 @@ module ProcessOut {
           },
         },
         handlePaymentSuccessCallback,
-        this.handlePaymentError.bind(this)
-      );
+        this.handlePaymentError.bind(this),
+      )
     }
 
     /**
@@ -267,34 +260,28 @@ module ProcessOut {
     private handlePaymentSuccess(
       data: NativeApmPaymentResponse,
       onFormSubmitFinished: Function,
-      onFormApiValidationError: Function
+      onFormApiValidationError: Function,
     ) {
-      onFormSubmitFinished();
+      onFormSubmitFinished()
 
       if (ErrorsUtils.isFieldsValidationError(data)) {
-        return onFormApiValidationError(data.invalid_fields);
+        return onFormApiValidationError(data.invalid_fields)
       }
 
       if (ErrorsUtils.isValidationError(data)) {
-        const errorView = new NativeApmErrorView(
-          this.gatewayConfiguration.native_apm,
-          this.theme
-        );
+        const errorView = new NativeApmErrorView(this.gatewayConfiguration.native_apm, this.theme)
 
-        EventsUtils.dispatchPaymentErrorEvent(data);
+        EventsUtils.dispatchPaymentErrorEvent(data)
 
-        return this.loadView(errorView.getViewElement());
+        return this.loadView(errorView.getViewElement())
       }
 
       if (!data.success) {
-        const errorView = new NativeApmErrorView(
-          this.gatewayConfiguration.native_apm,
-          this.theme
-        );
+        const errorView = new NativeApmErrorView(this.gatewayConfiguration.native_apm, this.theme)
 
-        EventsUtils.dispatchPaymentErrorEvent(data);
+        EventsUtils.dispatchPaymentErrorEvent(data)
 
-        return this.loadView(errorView.getViewElement());
+        return this.loadView(errorView.getViewElement())
       }
 
       if (data.native_apm && data.native_apm.state === "CUSTOMER_INPUT") {
@@ -306,66 +293,57 @@ module ProcessOut {
           },
           this.proceedPayment.bind(this),
           this.theme,
-          this.prefilledData
-        );
+          this.prefilledData,
+        )
 
-        EventsUtils.dispatchPaymentAdditionalInputEvent();
+        EventsUtils.dispatchPaymentAdditionalInputEvent()
 
-        return this.loadView(customerInputView.getViewElement());
+        return this.loadView(customerInputView.getViewElement())
       }
 
       if (data.native_apm && data.native_apm.state === "PENDING_CAPTURE") {
-        this.updatePaymentProviderLogo(
-          data.native_apm.parameterValues["provider_logo_url"]
-        );
+        this.updatePaymentProviderLogo(data.native_apm.parameterValues["provider_logo_url"])
 
         const pendingView = new NativeApmPendingView(
           this.gatewayConfiguration,
           this.markdownLibraryInstance,
           this.theme,
           this.capturePayment.bind(this),
-          data.native_apm.parameterValues
-        );
+          data.native_apm.parameterValues,
+        )
 
-        EventsUtils.dispatchPaymentInitEvent();
+        EventsUtils.dispatchPaymentInitEvent()
 
-        return this.loadView(pendingView.getViewElement());
+        return this.loadView(pendingView.getViewElement())
       }
     }
 
     /**
      * This function handles error response of payment
      */
-    private handlePaymentError(
-      req: XMLHttpRequest,
-      e: ProgressEvent,
-      errorCode: ApiRequestError
-    ) {
-      const errorView = new NativeApmErrorView(
-        this.gatewayConfiguration.native_apm,
-        this.theme
-      );
+    private handlePaymentError(req: XMLHttpRequest, e: ProgressEvent, errorCode: ApiRequestError) {
+      const errorView = new NativeApmErrorView(this.gatewayConfiguration.native_apm, this.theme)
 
-      let errorData = req.response;
+      let errorData = req.response
       if (!req.response && errorCode)
         errorData = {
           success: false,
           error_type: errorCode,
           message: Translator.translateError(errorCode),
-        };
+        }
 
-      EventsUtils.dispatchPaymentErrorEvent(errorData);
+      EventsUtils.dispatchPaymentErrorEvent(errorData)
 
-      this.loadView(errorView.getViewElement());
+      this.loadView(errorView.getViewElement())
     }
 
     /**
      * This function captures Native APM payment
      */
     public capturePayment() {
-      const paymentConfig = this.paymentConfig.getConfig();
+      const paymentConfig = this.paymentConfig.getConfig()
       if (!this.captureStart) {
-        this.captureStart = new Date();
+        this.captureStart = new Date()
       }
 
       this.processOutInstance.apiRequest(
@@ -375,17 +353,16 @@ module ProcessOut {
           source: paymentConfig.gatewayConfigurationId,
         },
         this.handleCaptureSuccess.bind(this),
-        this.handleCaptureError.bind(this)
-      );
+        this.handleCaptureError.bind(this),
+      )
     }
 
     private checkIfCaptureTimeout() {
-      const now = new Date();
+      const now = new Date()
 
-      const differenceInSeconds =
-        (now.getTime() - this.captureStart.getTime()) / 1000;
+      const differenceInSeconds = (now.getTime() - this.captureStart.getTime()) / 1000
 
-      return differenceInSeconds >= this.paymentConfig.pollingMaxTimeout;
+      return differenceInSeconds >= this.paymentConfig.pollingMaxTimeout
     }
 
     /**
@@ -398,7 +375,7 @@ module ProcessOut {
         data.native_apm.state === "PENDING_CAPTURE" &&
         !this.checkIfCaptureTimeout()
       ) {
-        return this.capturePayment();
+        return this.capturePayment()
       }
 
       if (
@@ -407,61 +384,51 @@ module ProcessOut {
         data.native_apm.state === "PENDING_CAPTURE" &&
         this.checkIfCaptureTimeout()
       ) {
-        this.captureStart = null;
+        this.captureStart = null
 
-        return EventsUtils.dispatchPaymentErrorEvent(data);
+        return EventsUtils.dispatchPaymentErrorEvent(data)
       }
 
       if (!data.success) {
-        this.captureStart = null;
-        const errorView = new NativeApmErrorView(
-          this.gatewayConfiguration.native_apm,
-          this.theme
-        );
+        this.captureStart = null
+        const errorView = new NativeApmErrorView(this.gatewayConfiguration.native_apm, this.theme)
 
-        EventsUtils.dispatchPaymentErrorEvent(data);
+        EventsUtils.dispatchPaymentErrorEvent(data)
 
-        return this.loadView(errorView.getViewElement());
+        return this.loadView(errorView.getViewElement())
       }
 
-      this.captureStart = null;
+      this.captureStart = null
       const successView = new NativeApmSuccessView(
         this.gatewayConfiguration,
         this.markdownLibraryInstance,
-        this.theme
-      );
+        this.theme,
+      )
 
       EventsUtils.dispatchPaymentSuccessEvent({
         returnUrl: this.paymentConfig.returnUrl,
-      });
+      })
 
-      return this.loadView(successView.getViewElement());
+      return this.loadView(successView.getViewElement())
     }
 
     /**
      * This function handles Native APM capture error
      */
-    private handleCaptureError(
-      req: XMLHttpRequest,
-      e: ProgressEvent,
-      errorCode: ApiRequestError
-    ) {
-      const errorView = new NativeApmErrorView(
-        this.gatewayConfiguration.native_apm,
-        this.theme
-      );
+    private handleCaptureError(req: XMLHttpRequest, e: ProgressEvent, errorCode: ApiRequestError) {
+      const errorView = new NativeApmErrorView(this.gatewayConfiguration.native_apm, this.theme)
 
-      let errorData = req.response;
+      let errorData = req.response
       if (!req.response && errorCode)
         errorData = {
           success: false,
           error_type: errorCode,
           message: Translator.translateError(errorCode),
-        };
+        }
 
-      EventsUtils.dispatchPaymentErrorEvent(errorData);
+      EventsUtils.dispatchPaymentErrorEvent(errorData)
 
-      this.loadView(errorView.getViewElement());
+      this.loadView(errorView.getViewElement())
     }
 
     /**
@@ -469,7 +436,7 @@ module ProcessOut {
      * @param {NativeApmThemeConfigType} themeConfig
      */
     public setTheme(themeConfig: NativeApmThemeConfigType) {
-      return this.theme.setTheme(themeConfig);
+      return this.theme.setTheme(themeConfig)
     }
 
     /**
@@ -477,7 +444,7 @@ module ProcessOut {
      * @param {PrefilledData} data
      */
     public prefillData(data: PrefilledData) {
-      this.prefilledData = data;
+      this.prefilledData = data
     }
 
     /**
@@ -485,13 +452,13 @@ module ProcessOut {
      */
     private loadView(view: HTMLElement) {
       if (this.widgetWrapper) {
-        this.napmContainer.removeChild(this.widgetWrapper);
+        this.napmContainer.removeChild(this.widgetWrapper)
       }
 
-      this.widgetWrapper = this.createWidgetWrapper();
-      this.widgetWrapper.appendChild(view);
+      this.widgetWrapper = this.createWidgetWrapper()
+      this.widgetWrapper.appendChild(view)
 
-      this.napmContainer.appendChild(this.widgetWrapper);
+      this.napmContainer.appendChild(this.widgetWrapper)
     }
 
     /**
@@ -508,7 +475,7 @@ module ProcessOut {
               logo_url: logoUrl,
             },
           },
-        };
+        }
       }
     }
 
@@ -516,38 +483,37 @@ module ProcessOut {
      * This function creates widget wrapper for styling purposes
      */
     private createWidgetWrapper() {
-      const widgetWrapper = document.createElement("div");
-      const styleElement = this.theme.createInitialStyleTag();
+      const widgetWrapper = document.createElement("div")
+      const styleElement = this.theme.createInitialStyleTag()
 
-      widgetWrapper.setAttribute("class", "native-apm-widget-wrapper");
+      widgetWrapper.setAttribute("class", "native-apm-widget-wrapper")
 
-      widgetWrapper.appendChild(styleElement);
+      widgetWrapper.appendChild(styleElement)
 
-      StylesUtils.styleElement(widgetWrapper, this.theme.wrapper);
+      StylesUtils.styleElement(widgetWrapper, this.theme.wrapper)
 
-      return widgetWrapper;
+      return widgetWrapper
     }
 
     /**
      * This function loads markdown JS library to handle custommer action messages
      */
     private loadMarkdownLibrary() {
-      const markdownScript = document.createElement("script");
-      markdownScript.src =
-        "https://js.processout.com/js/libraries/showdown.min.js";
+      const markdownScript = document.createElement("script")
+      markdownScript.src = "https://js.processout.com/js/libraries/showdown.min.js"
       markdownScript.onload = () => {
         this.markdownLibraryInstance =
           window.globalThis && window.globalThis.showdown
             ? new window.globalThis.showdown.Converter()
-            : null;
-      };
-      document.head.appendChild(markdownScript);
+            : null
+      }
+      document.head.appendChild(markdownScript)
     }
 
     private loadQrCodesLibrary() {
-      const qrCodeScript = document.createElement("script");
-      qrCodeScript.src = "https://js.processout.com/js/libraries/qrcode.min.js";
-      document.head.appendChild(qrCodeScript);
+      const qrCodeScript = document.createElement("script")
+      qrCodeScript.src = "https://js.processout.com/js/libraries/qrcode.min.js"
+      document.head.appendChild(qrCodeScript)
     }
   }
 }
