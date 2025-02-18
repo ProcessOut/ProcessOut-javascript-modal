@@ -5,6 +5,7 @@ interface Transaction {
 type Invoice = {
   id: string;
   name: string;
+  customer_id: string;
   order_id: string | null;
   amount: string;
   currency: string;
@@ -95,4 +96,5 @@ type Apm = {
       raster: string;
     };
   };
+  deleting_allowed?: boolean;
 };

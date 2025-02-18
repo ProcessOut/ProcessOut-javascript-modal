@@ -140,7 +140,7 @@ const defaultStyles = `
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 40px;
     width: 100%;
 
     @media (max-width: 480px) {
@@ -210,6 +210,11 @@ const defaultStyles = `
     width: 100%;
     border-bottom: 1px solid #dde0e3;
     cursor: pointer;
+  }
+
+  .dco-payment-method-wrapper--delete-mode {
+    cursor: default;
+    pointer-events: none;
   }
 
   .dco-payment-method-wrapper:has(input[type="radio"]:checked) {
@@ -348,6 +353,7 @@ const defaultStyles = `
     border: 1px solid #dde0e3;
     background-color: #fff;
     padding: 8px;
+    color: #000;
     width: 100%;
   }
 
@@ -481,4 +487,317 @@ const defaultStyles = `
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
   }
+    
+  .dco-express-checkout-header-settings-button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all .4s;
+    border-radius: 4px;
+  }
+
+  .dco-delete-payment-method-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all .4s;
+    border-radius: 4px;
+    pointer-events: auto;
+  }
+
+  .dco-delete-payment-method-button:hover, .dco-express-checkout-header-settings-button:hover {
+    background-color: #1213140f;
+  }
+
+  .dco-express-checkout-header-wrapper {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-box {
+    width: 600px;
+  }
+
+  .close-modal-btn {
+    background-color: #F2F2F2;
+    border: none;
+    padding: 14px 16px;
+    float: right;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .dco-modal-content-header {
+    padding: 24px;
+    font-size: 20px;
+    font-weight: 600;
+    border-bottom: 1px solid #F2F2F2;
+  }
+
+  .dco-modal-content-body {
+    padding: 24px;
+    height: 379px;
+    overflow-y: auto;
+  }
+  
+
+  .dco-modal-payment-methods-list {
+    width: 100%;
+    border: 1px solid #dde0e3;
+    border-radius: 4px;
+  }
+
+  .dco-modal-payment-methods-list--no-methods {
+    border: none;
+    height: 100%;
+  }
+
+.tingle-modal * {
+  box-sizing: border-box;
+}
+
+.tingle-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  visibility: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, .8);
+  opacity: 0;
+  transition: opacity .2s ease;
+  align-items: center;
+  -webkit-transition: opacity .2s ease;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+}
+
+.tingle-modal--confirm .tingle-modal-box {
+  text-align: center;
+}
+
+.tingle-modal--noClose {
+  cursor: default;
+}
+
+.tingle-modal--noClose .tingle-modal__close {
+  display: none;
+}
+
+.tingle-modal__close {
+  position: fixed;
+  top: 1vw;
+  right: 1vw;
+  z-index: 1000;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 40px;
+  line-height: normal;
+  cursor: pointer;
+}
+
+.tingle-modal-box {
+  position: relative;
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 4px;
+  height: 490px;
+  background: #fff;
+  opacity: 1;
+  cursor: auto;
+  -webkit-transition: -webkit-transform .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: -webkit-transform .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform .3s cubic-bezier(0.175, 0.885, 0.32, 1.275), -webkit-transform .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  -webkit-transform: scale(.8);
+  -ms-transform: scale(.8);
+  transform: scale(.8);
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.tingle-modal-box__content {
+  padding: 0;
+}
+
+.tingle-modal-box__footer {
+  padding: 16px;
+  width: auto;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top: 1px solid #F2F2F2;
+  background-color: #FFF;
+  cursor: auto;
+}
+
+.tingle-modal-box__footer::after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
+.tingle-modal-box__footer--sticky {
+  position: fixed;
+  bottom: -200px;
+  z-index: 10001;
+  opacity: 1;
+  -webkit-transition: bottom .3s ease-in-out .3s;
+  transition: bottom .3s ease-in-out .3s;;
+}
+
+.tingle-enabled {
+  overflow: hidden;
+  height: 100%;
+}
+
+.tingle-modal--visible .tingle-modal-box__footer {
+  bottom: 0;
+}
+
+.tingle-enabled .tingle-content-wrapper {
+  -webkit-filter: blur(15px);
+  filter: blur(15px);
+}
+
+.tingle-modal--visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tingle-modal__close {
+  display: none;
+}
+
+.tingle-modal--visible .tingle-modal-box {
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}
+
+.tingle-modal--overflow {
+  padding-top: 5vh;
+}
+
+.tingle-btn {
+  display: inline-block;
+  margin: 0 .5rem;
+  padding: 1rem 2rem;
+  border: none;
+  background-color: grey;
+  box-shadow: none;
+  color: #fff;
+  vertical-align: middle;
+  text-decoration: none;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: normal;
+  cursor: pointer;
+  -webkit-transition: background-color .4s;
+  transition: background-color .4s;
+}
+
+.tingle-btn--primary {
+  background-color: #3498db;
+}
+
+.tingle-btn--danger {
+  background-color: #e74c3c;
+}
+
+.tingle-btn--default {
+  background-color: #34495e;
+}
+
+.tingle-btn--pull-left {
+  float: left;
+}
+
+.tingle-btn--pull-right {
+  float: right;
+}
+
+.dco-invoice-loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dco-invoice-loading {
+  width: 40px;
+  height: 40px; 
+  border: 5px solid #dedede;
+  border-bottom-color: #242C38;
+  display: inline-block;
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+.dco-no-saved-payment-methods-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  height: 100%;
+  width: 100%;
+  gap: 24px;
+}
+
+.dco-no-saved-payment-methods-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 12px;
+}
+
+.dco-no-saved-payment-methods-header {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.dco-no-saved-payment-methods-message {
+  font-size: 14px;
+  color: #696F79;
+  font-weight: 400;
+}
+
+.dco-no-saved-payment-methods-icon-wrapper {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: #1213140a;
+}
 `;

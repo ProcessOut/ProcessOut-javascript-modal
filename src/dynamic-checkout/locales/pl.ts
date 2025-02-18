@@ -28,5 +28,10 @@ module ProcessOut {
     "city-label": "Miasto",
     "postcode-label": "Kod pocztowy",
     "state-label": "Stan",
+    "payments-manager-header": "Zarządzaj zapisanymi metodami płatności",
+    "payments-manager-close-button": "Zamknij",
+    "no-saved-payment-methods-header": "Brak zapisanych metod płatności",
+    "no-saved-payment-methods-message":
+      "Gdy następnym razem zapiszesz metodę płatności, pojawi się tutaj.",
   };
 }

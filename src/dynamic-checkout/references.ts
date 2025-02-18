@@ -7,6 +7,7 @@
 /// <reference path="views/payment-success.ts" />
 /// <reference path="views/invoice-loading.ts" />
 /// <reference path="elements/payment-method-button.ts" />
+/// <reference path="elements/payment-methods-manager.ts" />
 /// <reference path="payment-methods/card.ts" />
 /// <reference path="payment-methods/apm.ts" />
 /// <reference path="payment-methods/saved-card.ts" />
