@@ -2,27 +2,20 @@
 
 module ProcessOut {
   export class ApplePayPaymentMethod {
-    private applePayClient: ApplePayClient;
-    public element: HTMLElement;
+    private applePayClient: ApplePayClient
+    public element: HTMLElement
 
     constructor(
       processOutInstance: ProcessOut,
-      paymentConfig: DynamicCheckoutPaymentConfigType,
+      paymentConfig: DynamicCheckoutPaymentConfig,
       invoiceData: Invoice,
-      resetContainerHtml: () => HTMLElement
+      resetContainerHtml: () => HTMLElement,
     ) {
-      this.applePayClient = new ApplePayClient(
-        processOutInstance,
-        paymentConfig
-      );
+      this.applePayClient = new ApplePayClient(processOutInstance, paymentConfig)
 
-      this.element = this.getApplePayButtonElement();
+      this.element = this.getApplePayButtonElement()
 
-      this.applePayClient.loadButton(
-        this.element,
-        invoiceData,
-        resetContainerHtml
-      );
+      this.applePayClient.loadButton(this.element, invoiceData, resetContainerHtml)
     }
 
     private getApplePayButtonElement() {
@@ -32,9 +25,9 @@ module ProcessOut {
         attributes: {
           id: "google-pay-button-container",
         },
-      });
+      })
 
-      return element;
+      return element
     }
   }
 }

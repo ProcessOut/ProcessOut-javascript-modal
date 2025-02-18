@@ -2,18 +2,18 @@
 
 module ProcessOut {
   export class PaymentMethodsManager {
-    public element: HTMLElement;
-    private expressPaymentMethods: PaymentMethodButton[];
-    public modal: any;
-    private paymentConfig: DynamicCheckoutPaymentConfigType;
+    public element: HTMLElement
+    private expressPaymentMethods: PaymentMethodButton[]
+    public modal: any
+    private paymentConfig: DynamicCheckoutPaymentConfig
 
     constructor(
       expressPaymentMethods: PaymentMethodButton[],
-      paymentConfig: DynamicCheckoutPaymentConfigType
+      paymentConfig: DynamicCheckoutPaymentConfig,
     ) {
-      this.expressPaymentMethods = expressPaymentMethods;
-      this.element = this.createElement();
-      this.paymentConfig = paymentConfig;
+      this.expressPaymentMethods = expressPaymentMethods
+      this.element = this.createElement()
+      this.paymentConfig = paymentConfig
     }
 
     private createElement() {
@@ -30,16 +30,16 @@ module ProcessOut {
               src: COG_ICON,
             },
           },
-        ]);
+        ])
 
       expressCheckoutSettingsButton.addEventListener(
         "click",
-        this.openSavedPaymentMethodsManagerModal.bind(this)
-      );
+        this.openSavedPaymentMethodsManagerModal.bind(this),
+      )
 
-      expressCheckoutSettingsButton.appendChild(expressCheckoutCogIcon);
+      expressCheckoutSettingsButton.appendChild(expressCheckoutCogIcon)
 
-      return expressCheckoutSettingsButton;
+      return expressCheckoutSettingsButton
     }
 
     private openSavedPaymentMethodsManagerModal() {
@@ -51,61 +51,54 @@ module ProcessOut {
               closeMethods: ["overlay", "button", "escape"],
               closeLabel: Translations.getText(
                 "payments-manager-close-button",
-                this.paymentConfig.locale
+                this.paymentConfig.locale,
               ),
             })
-          : null;
+          : null
 
-      this.modal.setContent(this.createModalContent());
+      this.modal.setContent(this.createModalContent())
 
       this.modal.addFooterBtn(
-        Translations.getText(
-          "payments-manager-close-button",
-          this.paymentConfig.locale
-        ),
+        Translations.getText("payments-manager-close-button", this.paymentConfig.locale),
         "close-modal-btn",
         () => {
-          this.modal.close();
-        }
-      );
+          this.modal.close()
+        },
+      )
 
-      this.modal.open();
+      this.modal.open()
     }
 
     private createModalContent() {
-      const [wrapper, header, body, paymentMethodsList] =
-        HTMLElements.createMultipleElements([
-          {
-            tagName: "div",
-            classNames: ["dco-modal-content-wrapper"],
-          },
-          {
-            tagName: "div",
-            classNames: ["dco-modal-content-header"],
-            textContent: Translations.getText(
-              "payments-manager-header",
-              this.paymentConfig.locale
-            ),
-          },
-          {
-            tagName: "div",
-            classNames: ["dco-modal-content-body"],
-          },
-          {
-            tagName: "div",
-            classNames: ["dco-modal-payment-methods-list"],
-          },
-        ]);
+      const [wrapper, header, body, paymentMethodsList] = HTMLElements.createMultipleElements([
+        {
+          tagName: "div",
+          classNames: ["dco-modal-content-wrapper"],
+        },
+        {
+          tagName: "div",
+          classNames: ["dco-modal-content-header"],
+          textContent: Translations.getText("payments-manager-header", this.paymentConfig.locale),
+        },
+        {
+          tagName: "div",
+          classNames: ["dco-modal-content-body"],
+        },
+        {
+          tagName: "div",
+          classNames: ["dco-modal-payment-methods-list"],
+        },
+      ])
 
-      this.expressPaymentMethods.forEach((paymentMethod) => {
-        paymentMethodsList.appendChild(paymentMethod.element);
-      });
+      this.expressPaymentMethods.forEach(paymentMethod => {
+        paymentMethodsList.appendChild(paymentMethod.element)
+      })
 
-      body.appendChild(paymentMethodsList);
-      wrapper.appendChild(header);
-      wrapper.appendChild(body);
+      body.appendChild(paymentMethodsList)
+      wrapper.appendChild(header)
+      wrapper.appendChild(body)
 
-      return wrapper;
+      return wrapper
     }
   }
 }
